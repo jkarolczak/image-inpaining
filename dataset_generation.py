@@ -15,9 +15,9 @@ if __name__ == "__main__":
     seed = params['generate']['seed']
     dataset_size = params['generate']['dataset_size']
 
-    target_path = "data/target_img"
-    input_path =  "data/input_img"
-    local_path = "data/local_img"
+    target_path = "data/img/target"
+    input_path =  "data/img/input"
+    local_path = "data/img/local"
     paths = [target_path, input_path, local_path]
 
     for path in paths:

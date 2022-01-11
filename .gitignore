@@ -1,5 +1,6 @@
 # Project requirements
-data/
+data/img/
+data/dataset.csv
 
 # Initial dataset folder
 dataset/
@@ -157,3 +158,5 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 /dataset
+/data/img
+/data/dataset.csv

@@ -1,0 +1,5 @@
+[core]
+    remote = azure
+['remote "azure"']
+    url = azure://inpainting/celebrity
+    connection_string = DefaultEndpointsProtocol=https;AccountName=inpainting;AccountKey=HFDYEIisxxlNqDA3BLbcl3sgtysnBqQxGsswYPngLlEEbHoy7FAYQzd4i961kaeB4ynkWif9JAPDx7zjdR3Ycg==;EndpointSuffix=core.windows.net
