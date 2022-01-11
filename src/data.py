@@ -7,7 +7,7 @@ from numpy.lib.arraysetops import isin
 import pandas as pd
 import torch
 
-
+# needs to be adjusted to new data structure
 class Dataset(torch.utils.data.Dataset):
     def __init__(
         self,
