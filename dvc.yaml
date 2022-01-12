@@ -1,0 +1,9 @@
+stages:
+  generate_data:
+    cmd: py dataset_generation.py
+    params:
+    - generate.dataset_size
+    - generate.seed
+    outs:
+    - data/dataset.csv
+    - data/img

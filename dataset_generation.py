@@ -20,7 +20,12 @@ if __name__ == "__main__":
     local_path = "data/img/local"
     paths = [target_path, input_path, local_path]
 
+    if not os.path.isdir("data/img"):
+        os.mkdir("data/img")
+
     for path in paths:
+        if not os.path.isdir(path):
+            os.mkdir(path)
         for file_name in os.listdir(path):
             file_path = os.path.join(path, file_name)
             if not os.path.isfile(file_path):
