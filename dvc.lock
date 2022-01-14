@@ -8,9 +8,9 @@ stages:
         generate.seed: 23
     outs:
     - path: data/dataset.csv
-      md5: 21e5f6f974d339c5637fbed1b6023caa
-      size: 83901
+      md5: f3fca855f07f671ab2e098ceabeebe6f
+      size: 146137
     - path: data/img
-      md5: e19d1578e90d364874d91fb796051939.dir
-      size: 131959866
-      nfiles: 15000
+      md5: 22028654a51c694f27262b04a3e3749f.dir
+      size: 124895306
+      nfiles: 10000
