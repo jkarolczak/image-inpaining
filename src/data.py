@@ -2,12 +2,10 @@ import os
 from typing import Tuple, Union
 
 import cv2
-import numpy as np
-from numpy.lib.arraysetops import isin
 import pandas as pd
 import torch
 
-# needs to be adjusted to new data structure
+
 class Dataset(torch.utils.data.Dataset):
     def __init__(
         self,
@@ -50,20 +48,3 @@ class Dataset(torch.utils.data.Dataset):
         
         return (input_img, target_img, local_img)
     
-    """
-    def _remove_snippet(self, image: np.ndarray) -> np.ndarray:
-        img = image.copy()
-        size = self.snippet_size
-        if isinstance(size, int):
-            width, height = [size] * 2
-        elif isinstance(size, tuple):
-            if isinstance(size[0], int):
-                width, height = [np.random.randint(*size)] * 2
-            else:
-                width = np.random.randint(*size[0])
-                height = np.random.randint(*size[1])
-        y = 30 + np.random.randint(img.shape[1] - height - 60)        
-        x = 30 + np.random.randint(img.shape[1] - width - 60)
-        img[y:y + height, x:x + width] = np.array([255, 255, 255])
-        return img
-    """

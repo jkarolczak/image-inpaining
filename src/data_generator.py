@@ -3,9 +3,9 @@ from typing import Tuple, Union
 
 import cv2
 import numpy as np
-from numpy.lib.arraysetops import isin
 import pandas as pd
 import torch
+
 
 class GeneratedDataset(torch.utils.data.Dataset):
     def __init__(
@@ -28,7 +28,6 @@ class GeneratedDataset(torch.utils.data.Dataset):
         item_list = pd.read_csv(path)[filename_col]
         self.item_list = self.rng.choice(item_list, size=self.dataset_size, replace=False, shuffle=False)
         self.snippet_size = snippet_size
-        
         
     def __len__(self) -> int:
         return self.dataset_size
@@ -57,3 +56,4 @@ class GeneratedDataset(torch.utils.data.Dataset):
         snipped = img[y:y + height, x:x + width].copy()
         img[y:y + height, x:x + width] = np.array([255, 255, 255])
         return (img, snipped)
+    

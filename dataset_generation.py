@@ -16,7 +16,7 @@ if __name__ == "__main__":
     dataset_size = params['generate']['dataset_size']
 
     target_path = "data/img/target"
-    input_path =  "data/img/input"
+    input_path = "data/img/input"
     local_path = "data/img/local"
     paths = [target_path, input_path, local_path]
 
@@ -46,5 +46,3 @@ if __name__ == "__main__":
     
     image_df = pd.DataFrame(image_ids)
     image_df.to_csv("data/dataset.csv")
-
-        
