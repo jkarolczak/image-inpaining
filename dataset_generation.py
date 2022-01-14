@@ -1,7 +1,7 @@
-import cv2
 import os
 import yaml
-import numpy as np
+
+import cv2
 import pandas as pd
 
 from src.data_generator import GeneratedDataset
@@ -10,7 +10,7 @@ from src.visualization import transformToImage
 
 if __name__ == "__main__":
     
-    with open("params.yaml", 'r') as fd:
+    with open("cfg/params.yaml", 'r') as fd:
         params = yaml.safe_load(fd)
     seed = params['generate']['seed']
     dataset_size = params['generate']['dataset_size']
@@ -20,8 +20,7 @@ if __name__ == "__main__":
     local_path = "data/img/local"
     paths = [target_path, input_path, local_path]
 
-    if not os.path.isdir("data/img"):
-        os.mkdir("data/img")
+    os.makedirs("data/img", exist_ok=True)
 
     for path in paths:
         if not os.path.isdir(path):

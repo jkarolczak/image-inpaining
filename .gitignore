@@ -1,3 +1,6 @@
+# Configs containing secrets
+cfg/neptune.yaml
+
 # Project requirements
 data/img/
 data/dataset.csv
