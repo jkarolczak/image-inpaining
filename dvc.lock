@@ -4,13 +4,13 @@ stages:
     cmd: py dataset_generation.py
     params:
       params.yaml:
-        generate.dataset_size: 20000
+        generate.dataset_size: 5000
         generate.seed: 23
     outs:
     - path: data/dataset.csv
-      md5: 2238ea7ecf7cfa46d2222bc72b3c21b3
-      size: 348901
+      md5: 21e5f6f974d339c5637fbed1b6023caa
+      size: 83901
     - path: data/img
-      md5: e358003c5599cea6923cf089397ecd9b.dir
-      size: 526512775
-      nfiles: 60000
+      md5: e19d1578e90d364874d91fb796051939.dir
+      size: 131959866
+      nfiles: 15000
