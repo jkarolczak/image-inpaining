@@ -1,5 +1,4 @@
 import os
-from turtle import forward
 import yaml
 
 import torch
@@ -10,7 +9,7 @@ class Generator(nn.Module):
     def __init__(
         self,
         cfg_dir: str = 'cfg', 
-        generator_yaml: str = 'neptune.yaml'
+        generator_yaml: str = 'net_generator.yaml'
     ):
         super().__init__()
         
@@ -76,13 +75,12 @@ class Generator(nn.Module):
             nn.ReLU(),
             nn.Conv2d(in_channels=64, out_channels=3, kernel_size=3, stride=1, padding=1),
         )
-       
     
     def forward(
         self,
         x: torch.Tensor
     ) -> torch.Tensor:
-        x = x.reshape(x.shape[0], x.shape[-1], x.shape[-3], x.shape[-2])
+        x = x.reshape(x.shape[-4], x.shape[-1], x.shape[-3], x.shape[-2])
         
         x = self.encoder_conv_1(x)
         shape_1 = x.shape
@@ -103,12 +101,5 @@ class Generator(nn.Module):
         x = self.maxunpool(x, indices_1, output_size=shape_1)
         x = self.decoder_conv_1(x)
         
-        
-        x = x.reshape(x.shape[0], x.shape[-2], x.shape[-1], x.shape[-3])
-        #img = self.encoder(img)
-        #print(img.shape)
-        #img = self.feature_extractor(img)
-        #print(img.shape)
-        #img = self.decoder(img)
-        #print(img.shape)
+        x = x.reshape(x.shape[-4], x.shape[-2], x.shape[-1], x.shape[-3])
         return x

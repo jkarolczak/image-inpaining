@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 
-def transformToImage(
+def transform_to_image(
     image: Union[np.ndarray, torch.Tensor]
 ) -> np.ndarray:
     if isinstance(image, np.ndarray):
@@ -25,9 +25,8 @@ def transformToImage(
 
 def imshow(
     image: Union[np.ndarray, torch.Tensor]    
-) -> None:
-
-    image = transformToImage(image)
+) -> None:        
+    image = transform_to_image(image)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     
     plt.figure(figsize=(12, 8))
