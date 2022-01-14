@@ -3,7 +3,7 @@ stages:
   generate_data:
     cmd: py dataset_generation.py
     params:
-      params.yaml:
+      cfg/params.yaml:
         generate.dataset_size: 5000
         generate.seed: 23
     outs:
