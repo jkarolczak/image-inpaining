@@ -14,17 +14,3 @@ class Discrimator(nn.Module):
         img: torch.Tensor
     ) -> torch.Tensor:
         pass
-    
-
-class Generator(nn.Module):
-    def __init__(
-        self
-    ):
-        super().__init__()
-        pass
-    
-    def forward(
-        self,
-        img: torch.Tensor
-    ) -> torch.Tensor:
-        pass

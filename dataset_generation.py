@@ -10,7 +10,7 @@ from src.visualization import transformToImage
 
 if __name__ == "__main__":
     
-    with open("cfg/params.yaml", 'r') as fd:
+    with open("cfg/dataset.yaml", 'r') as fd:
         params = yaml.safe_load(fd)
     seed = params['generate']['seed']
     dataset_size = params['generate']['dataset_size']
