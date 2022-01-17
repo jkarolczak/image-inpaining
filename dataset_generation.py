@@ -4,7 +4,7 @@ import yaml
 import cv2
 import pandas as pd
 
-from src.data_generator import GeneratedDataset
+from src.data import GeneratedDataset
 from src.visualization import transform_to_image
 
 
