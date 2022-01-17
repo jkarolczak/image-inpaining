@@ -38,13 +38,13 @@ class Dataset(torch.utils.data.Dataset):
 
         input_path = os.path.join(self.dir, self.image_dir, self.input_dir, img_name)
         input_img = cv2.imread(input_path)
-        input_img = torch.tensor(input_img, dtype=torch.float32, requires_grad=True)
+        input_img = torch.tensor(input_img, dtype=torch.float32)
 
         target_path = os.path.join(self.dir, self.image_dir, self.target_dir, img_name)
         target_img = cv2.imread(target_path)
-        target_img = torch.tensor(target_img, dtype=torch.float32, requires_grad=True)
+        target_img = torch.tensor(target_img, dtype=torch.float32)
         
-        coords = torch.tensor(self.bboxes.iloc[idx].values, dtype=torch.int8, requires_grad=False)
+        coords = torch.tensor(self.bboxes.iloc[idx].values, dtype=torch.int8)
         
         return (input_img, target_img, coords)
     

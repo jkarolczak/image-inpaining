@@ -1,3 +1,7 @@
+# Algorithm outputs
+models/
+*.neptune/
+
 # Configs containing secrets
 cfg/neptune.yaml
 
