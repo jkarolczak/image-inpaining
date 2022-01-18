@@ -1,10 +1,13 @@
 import os
+from copy import deepcopy
 from typing import Tuple, Union
 
 import cv2
 import numpy as np
 import pandas as pd
 import torch
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader
 
 
 class GeneratedDataset(torch.utils.data.Dataset):
@@ -71,8 +74,7 @@ class Dataset(torch.utils.data.Dataset):
         input_dir: str = 'input/',
         target_dir: str = 'target/',
         item_list: str = 'dataset.csv',
-        filename_col: str = 'image_id',
-        snippet_size: Union[int, Tuple[int, int], Tuple[Tuple[int, int], Tuple[int, int]]] = ((25, 55), (25, 55))
+        filename_col: str = 'image_id'
     ):
         super().__init__()
         itemlist_path = os.path.join(dir, item_list)
@@ -80,7 +82,6 @@ class Dataset(torch.utils.data.Dataset):
         self.image_dir = image_dir
         self.input_dir = input_dir
         self.target_dir = target_dir
-        self.snippet_size = snippet_size
         
         df = pd.read_csv(itemlist_path)
         
@@ -91,7 +92,7 @@ class Dataset(torch.utils.data.Dataset):
         return self.item_list.shape[0]
     
     def __getitem__(self, idx: int) -> torch.Tensor:
-        img_name = self.item_list[idx]
+        img_name = self.item_list.iloc[idx]
 
         input_path = os.path.join(self.dir, self.image_dir, self.input_dir, img_name)
         input_img = cv2.imread(input_path)
@@ -105,3 +106,48 @@ class Dataset(torch.utils.data.Dataset):
         
         return (input_img, target_img, coords)
     
+
+def dataset_split(
+    dataset: Dataset,
+    train_size: float = 0.85
+) -> Tuple[Dataset, Dataset]:
+    itemlist_train, itemlist_test, bboxes_train, bboxes_test = train_test_split(
+        dataset.item_list, dataset.bboxes, train_size=train_size
+    )
+    train = deepcopy(dataset)
+    test = deepcopy(dataset)
+    
+    train.item_list = itemlist_train
+    test.item_list = itemlist_test
+    train.bboxes = bboxes_train
+    test.bboxes = bboxes_test
+    
+    return (train, test)
+
+
+def dataloader_split(
+    dataloader: DataLoader,
+    config: dict, 
+    train_size: float = 0.85,
+) -> Tuple[DataLoader, DataLoader]:
+    dataset = dataloader.dataset
+    ds_train, ds_test = dataset_split(dataset, train_size)
+    
+    shuffle = config['dataloader']['shuffle']
+    batch_size = config['dataloader']['batch_size']
+    num_workers = config['dataloader']['num_workers']
+    
+    dl_train = DataLoader(
+        ds_train,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=num_workers
+    )
+    dl_test = DataLoader(
+        ds_test,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=num_workers
+    )
+    
+    return (dl_train, dl_test)

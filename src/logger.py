@@ -1,6 +1,7 @@
 import os
 import yaml
 
+import torch
 import torch.nn as nn
 
 import neptune.new as neptune
@@ -20,15 +21,55 @@ def get_run(
         mode='debug' if debug else 'async'
     )
 
+
+def log_metrics(
+    run: neptune.Run, 
+    metrics: dict, 
+    stage: str, 
+    phase: str
+) -> None:
+    for key, value in metrics.items():
+        run[f"{stage}/{phase}/{key}"] = value
+
+
 class log:
     class stage1:
         @staticmethod
-        def init(run: neptune.Run, config: dict) -> None:
-            run["stage1/learning_rate"] = config['stage1']['lr']
-            run["stage1/weight_decay"] = config['stage1']['weight_decay']
-            run["stage1/optimizer"] = config['stage1']['optimizer'].lower()
-        
+        def init(
+            run: neptune.Run, 
+            optimizer: torch.optim.Optimizer, 
+            criterion: nn.Module,
+            epochs: int
+        ) -> None:
+            run["stage1/learning_rate"] = optimizer.defaults['lr']
+            run["stage1/weight_decay"] = optimizer.defaults['weight_decay']
+            run["stage1/optimizer"] = type(optimizer).__name__
+            run["stage1/criterion"] = type(criterion).__name__ 
+            run["stage1/epochs"] = epochs
+            
+        class epoch:
+            @staticmethod
+            def train(run: neptune.Run, metrics: dict) -> None:
+                log_metrics(run, metrics, "stage1", "train")
+                
+            @staticmethod
+            def test(run: neptune.Run, metrics: dict) -> None:
+                log_metrics(run, metrics, "stage1", "test")
+    
+    class stage2:
         @staticmethod
-        def epoch(run: neptune.Run, metrics: dict) -> None:
-            for key, value in metrics.items():
-                run[f"stage1/train/{key}"] = value
+        def init(
+            run: neptune.Run,
+            *args
+        ) -> None:
+            pass
+        
+        class epoch:
+            @staticmethod
+            def train(run: neptune.Run, metrics: dict) -> None:
+                log_metrics(run, metrics, "stage2", "train")
+                
+            @staticmethod
+            def test(run: neptune.Run, metrics: dict) -> None:
+                log_metrics(run, metrics, "stage2", "test")
+                

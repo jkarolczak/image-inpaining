@@ -1,14 +1,20 @@
 import argparse
 import os
+import sys
 import yaml
+from typing import Tuple
 
 import torch
 import torch.nn as nn
 
 from src.data import Dataset
-from src.models import Generator
+from src.models import Generator, GlobalDiscriminator, LocalDiscriminator
 from src.logger import get_run
 from src.training import stage1, stage2
+
+
+def suppress_stdout() -> None:
+    sys.stdout = open(os.devnull, 'w')
 
 
 def get_config(
@@ -44,23 +50,35 @@ def get_device(config: dict) -> torch.device:
 
 
 def get_generator(device: torch.device) -> Generator:
-    generator = Generator()
-    generator = generator.to(device)
-    return generator
+    return Generator().to(device)
+
+
+def get_discriminators(
+    device: torch.device
+) -> Tuple[GlobalDiscriminator, LocalDiscriminator]:
+    netGD = GlobalDiscriminator().to(device)
+    netLD = LocalDiscriminator().to(device)
+    return (netGD, netLD)
 
 
 def main(debug: bool = False) -> None:
     config = get_config()
     device = get_device(config)
     dataloader = get_dataloader(config)
-    generator = get_generator(device)
+    netG = get_generator(device)
+    netGD, netLD = get_discriminators(device)
     run = get_run(debug=debug)
-    stage1(generator, dataloader, device, config, debug, run)
-    stage2()
+    
+    stage1(netG, dataloader, device, config, debug, run)
+    stage2(netG, netGD, netLD, dataloader, device, config, debug, run)
+    
+    run.stop()
         
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--debug', action='store_true', help="use to run script in debugging mode")
     args = parser.parse_args()
+    if not args.debug:
+        suppress_stdout()
     main(debug=args.debug)
