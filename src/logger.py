@@ -6,6 +6,10 @@ import torch.nn as nn
 
 import neptune.new as neptune
 
+from .models.generator import Generator
+from .models.global_discriminator import GlobalDiscriminator
+from .models.local_discriminator import LocalDiscriminator
+
 
 def get_run(
     cfg_dir: str = 'cfg', 
@@ -33,6 +37,18 @@ def log_metrics(
 
 
 class log:
+    @staticmethod
+    def models(
+        run: neptune.Run,
+        netG: Generator,
+        netGD: GlobalDiscriminator,
+        netLD: LocalDiscriminator,
+        device: torch.device
+    ) -> None:
+        for name, net in zip(['netG', 'netGD', 'netLD'], [netG, netGD, netLD]):
+            run[f"models/{name}"] = str(net)
+        run["device"] = device
+    
     class stage1:
         @staticmethod
         def init(
@@ -60,9 +76,20 @@ class log:
         @staticmethod
         def init(
             run: neptune.Run,
-            *args
+            optim_netG: torch.optim.Optimizer, 
+            optim_netGD: torch.optim.Optimizer, 
+            optim_netLD: torch.optim.Optimizer, 
+            criterion: nn.Module,
+            epochs: int
         ) -> None:
-            pass
+            for net in ['netG', 'netGD', 'netLD']:
+                optim = eval(f'optim_{net}')
+                run["stage2/{net}/optimizer"] = type(optim).__name__
+                run["stage2/{net}/learning_rate"] = optim.defaults['lr']
+                run["stage2/{net}/weight_decay"] = optim.defaults['weight_decay']
+                
+            run["stage2/criterion"] = type(criterion).__name__ 
+            run["stage2/epochs"] = epochs
         
         class epoch:
             @staticmethod

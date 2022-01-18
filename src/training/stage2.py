@@ -47,4 +47,4 @@ def main(
     criterion = get_criterion(config)
     optim_netG, optim_netGD, optim_netLD = get_optimizers(netG, netGD, netLD, config)
     epochs = get_epochs(config)
-    
+    log.stage2.init(run, optim_netG, optim_netGD, optim_netLD, criterion, epochs)

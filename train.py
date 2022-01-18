@@ -9,7 +9,7 @@ import torch.nn as nn
 
 from src.data import Dataset
 from src.models import Generator, GlobalDiscriminator, LocalDiscriminator
-from src.logger import get_run
+from src.logger import get_run, log
 from src.training import stage1, stage2
 
 
@@ -67,10 +67,13 @@ def main(debug: bool = False) -> None:
     dataloader = get_dataloader(config)
     netG = get_generator(device)
     netGD, netLD = get_discriminators(device)
+    nets = [netG, netGD, netLD]
+    
     run = get_run(debug=debug)
+    log.models(run, *nets, device)
     
     stage1(netG, dataloader, device, config, debug, run)
-    stage2(netG, netGD, netLD, dataloader, device, config, debug, run)
+    stage2(*nets, dataloader, device, config, debug, run)
     
     run.stop()
         

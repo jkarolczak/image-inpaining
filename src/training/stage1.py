@@ -70,7 +70,6 @@ def main(
         netG.eval()
         with torch.no_grad():
             for idx, (img_input, img_target, coords) in enumerate(test):
-                if idx == 20: break
                 img_input, img_target = tensors_to_device([img_input, img_target], device)
                 img_generated = netG(img_input)
                 
