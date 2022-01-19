@@ -47,7 +47,7 @@ class GlobalDiscriminator(nn.Module):
         with open(yaml_path, 'r') as fd:
             params = yaml.safe_load(fd)['global']
             
-        self.branches = [Branch() for _ in range(3)]
+        self.branches = nn.ModuleList([Branch() for _ in range(3)])
         
         self.attention = nn.MultiheadAttention(embed_dim=256, num_heads=4, batch_first=True)
         

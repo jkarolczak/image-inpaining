@@ -42,7 +42,7 @@ def main(
     log.stage1.init(run, optimizer, criterion, epochs)
     
     train, test = dataloader_split(dataloader, config)
-    
+        
     for e in range(epochs):
         netG.train()
         loss_accum = []

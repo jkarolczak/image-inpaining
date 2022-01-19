@@ -102,7 +102,8 @@ class Dataset(torch.utils.data.Dataset):
         target_img = cv2.imread(target_path)
         target_img = torch.tensor(target_img, dtype=torch.float32)
         
-        coords = torch.tensor(self.bboxes.iloc[idx].values, dtype=torch.int8)
+        #coords = torch.tensor(self.bboxes.iloc[idx].values, dtype=torch.int8)
+        coords = torch.tensor(self.bboxes.iloc[idx].values)
         
         return (input_img, target_img, coords)
     
