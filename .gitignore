@@ -1,5 +1,6 @@
 # Algorithm outputs
 models/
+inference_results/
 *.neptune/
 
 # Configs containing secrets
