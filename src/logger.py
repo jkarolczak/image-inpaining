@@ -33,7 +33,7 @@ def log_metrics(
     phase: str
 ) -> None:
     for key, value in metrics.items():
-        run[f"{stage}/{phase}/{key}"] = value
+        run[f"{stage}/{phase}/{key}"].log(value)
 
 
 class log:

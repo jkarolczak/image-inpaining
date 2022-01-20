@@ -22,6 +22,10 @@ To run the training process in debugging mode:<br>
 *Debugging stops logging to neptune and display intermediate results to standard output.*
 > `python train.py --debug`
 
+To performe inference using generator run:
+> `python infer.py --statedict path_to_statedict --images 10`
+Where `--path_to_statedict` stands for file to a pickled generators state dict and `--images` stands for number of images to use. Specifying number of images may be omitted.
+
 ## Theory behind
 
 Used notation:

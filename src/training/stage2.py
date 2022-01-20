@@ -66,6 +66,7 @@ def main(
     real_label, fake_label = get_labels(dataloader, device)   
 
     for e in range(epochs):
+        loss_G_accum, loss_GD_accum = [], []
         netG.train(); netGD.train(), netLD.train()
         for idx, (img_input, img_target, coords) in enumerate(dataloader):
             img_input, img_target = tensors_to_device([img_input, img_target], device)
@@ -80,7 +81,7 @@ def main(
             loss_GD_fake = criterionGD(img_fake_GD, fake_label)
             loss_GD_fake.backward()
             
-            lossGD = loss_GD_real + loss_GD_fake
+            loss_GD = (loss_GD_real + loss_GD_fake) / 2
             
             optim_netGD.step()
             
@@ -90,4 +91,11 @@ def main(
             loss_G.backward()
     
             optim_netG.step()
+            
+            loss_G_accum.append(loss_G.to(cpu))
+            loss_GD_accum.append(loss_GD.to(cpu))
+        
+        models.utils.serialize(netG, e + config['stage1']['epochs'])
+        models.utils.serialize(netGD, e + config['stage1']['epochs'])  
+        log.stage2.epoch.train(run, {'bceG': mean(loss_G_accum), 'bceGD': mean(loss_GD_accum)})      
                     
