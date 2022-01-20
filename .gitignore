@@ -1,5 +1,4 @@
 # Algorithm outputs
-models/
 inference_results/
 *.neptune/
 
