@@ -9,6 +9,9 @@ cfg/neptune.yaml
 data/img/
 data/dataset.csv
 
+# Saved models
+models/
+
 # Initial dataset folder
 dataset/
 
