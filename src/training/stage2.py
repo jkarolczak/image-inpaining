@@ -148,5 +148,9 @@ def main(
         
         models.utils.serialize(netG, e + config['stage1']['epochs'])
         models.utils.serialize(netGD, e + config['stage1']['epochs'])  
-        log.stage2.epoch.train(run, {'bceG': mean(loss_G_accum), 'bceGD': mean(loss_GD_accum)})      
+        log.stage2.epoch.train(run, {
+                                   'bceG': mean(loss_G_accum), 
+                                   'bceGD': mean(loss_GD_accum), 
+                                   'bceLD': mean(loss_LD_accum)
+                                })      
                     

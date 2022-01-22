@@ -84,9 +84,9 @@ class log:
         ) -> None:
             for net in ['netG', 'netGD', 'netLD']:
                 optim = eval(f'optim_{net}')
-                run["stage2/{net}/optimizer"] = type(optim).__name__
-                run["stage2/{net}/learning_rate"] = optim.defaults['lr']
-                run["stage2/{net}/weight_decay"] = optim.defaults['weight_decay']
+                run[f"stage2/{net}/optimizer"] = type(optim).__name__
+                run[f"stage2/{net}/learning_rate"] = optim.defaults['lr']
+                run[f"stage2/{net}/weight_decay"] = optim.defaults['weight_decay']
                 
             run["stage2/criterion"] = type(criterion).__name__ 
             run["stage2/epochs"] = epochs
