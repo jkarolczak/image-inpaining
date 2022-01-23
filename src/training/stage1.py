@@ -47,7 +47,8 @@ def main(
         netG.train()
         loss_accum = []
         for idx, (img_input, img_target, coords) in enumerate(train):
-            if idx == 30: break
+            if config['stage1']['limit_iters'] and idx == config['stage1']['limit_iters'] - 1:
+                break
             img_input, img_target = tensors_to_device([img_input, img_target], device)
             
             img_generated = netG(img_input)

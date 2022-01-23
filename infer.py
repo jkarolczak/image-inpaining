@@ -1,12 +1,14 @@
 
 import argparse
 import os
+import stat
 import yaml
 from typing import Dict
 
 import cv2
 import torch
 
+import src.models as models
 from src.data import Dataset
 from src.models import Generator
 
@@ -39,8 +41,8 @@ def get_device() -> torch.device:
     return torch.device('cpu')
 
 
-def get_generator(device: torch.device) -> Generator:
-    return Generator().to(device)
+def get_generator(device: torch.device, statedict_path: str = None) -> Generator:
+    return models.utils.deserialize(Generator(), statedict_path, device, '')       
 
 
 def prepare_directory() -> None:
@@ -58,7 +60,7 @@ def main(state_dict_path: str, images: int) -> None:
     prepare_directory()
     device = get_device()
     dataloader = get_dataloader()
-    netG = get_generator(device)
+    netG = get_generator(device, state_dict_path)
     
     netG.train()
     with torch.no_grad():
