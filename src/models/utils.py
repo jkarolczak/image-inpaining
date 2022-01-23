@@ -26,12 +26,12 @@ def deserialize(
     directory: str = 'models'
 ) -> nn.Module:
     file_path = os.path.join(directory, file_name)
-    state_dict = torch.load(file_path)
+    state_dict = torch.load(file_path, map_location=device)
     if isinstance(model, type):
         model = model()
-    model.load_state_dict(state_dict)
     if isinstance(device, str):
         device = torch.device(device)
+    model.load_state_dict(state_dict)
     model.to(device)
     return model
     

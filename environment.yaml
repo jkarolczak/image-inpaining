@@ -14,3 +14,4 @@ dependencies:
   - ipykernel
   - scikit-learn
   - neptune-client
+  - streamlit
