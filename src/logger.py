@@ -55,13 +55,15 @@ class log:
             run: neptune.Run, 
             optimizer: torch.optim.Optimizer, 
             criterion: nn.Module,
-            epochs: int
+            epochs: int,
+            iter_limit: int
         ) -> None:
             run["stage1/learning_rate"] = optimizer.defaults['lr']
             run["stage1/weight_decay"] = optimizer.defaults['weight_decay']
             run["stage1/optimizer"] = type(optimizer).__name__
             run["stage1/criterion"] = type(criterion).__name__ 
             run["stage1/epochs"] = epochs
+            run["stage1/iter_limit"] = iter_limit
             
         class epoch:
             @staticmethod
@@ -80,7 +82,8 @@ class log:
             optim_netGD: torch.optim.Optimizer, 
             optim_netLD: torch.optim.Optimizer, 
             criterion: nn.Module,
-            epochs: int
+            epochs: int,
+            iter_limit: int
         ) -> None:
             for net in ['netG', 'netGD', 'netLD']:
                 optim = eval(f'optim_{net}')
@@ -90,6 +93,7 @@ class log:
                 
             run["stage2/criterion"] = type(criterion).__name__ 
             run["stage2/epochs"] = epochs
+            run["stage2/iter_limit"] = iter_limit
         
         class epoch:
             @staticmethod

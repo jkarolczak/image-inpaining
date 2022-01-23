@@ -20,6 +20,10 @@ def get_epochs(config: dict) -> int:
     return config['stage2']['epochs']
 
 
+def get_iter_limit(config: dict) -> int:
+    return config['stage2']['limit_iters']
+
+
 def get_optimizers(
     netG: nn.Module, 
     netGD: nn.Module, 
@@ -48,7 +52,6 @@ def get_labels(
     return real, fake
 
 
-
 def main(
     netG: Generator,
     netGD: GlobalDiscriminator,
@@ -62,16 +65,19 @@ def main(
     criterionGD, criterionLD = get_criterion(config)
     optim_netG, optim_netGD, optim_netLD = get_optimizers(netG, netGD, netLD, config)
     epochs = get_epochs(config)
-    log.stage2.init(run, optim_netG, optim_netGD, optim_netLD, criterionGD, epochs)
+    iter_limit = get_iter_limit(config)
+    log.stage2.init(run, optim_netG, optim_netGD, optim_netLD, criterionGD, epochs, iter_limit)
 
     real_label, fake_label = get_labels(dataloader, device)
     real_local_label, fake_local_label = torch.ones((1, 1), device=device), torch.zeros((1, 1), device=device)
+
+    
 
     for e in range(epochs):
         loss_G_accum, loss_GD_accum, loss_LD_accum = [], [], []
         netG.train(); netGD.train(), netLD.train()
         for idx, (img_input, img_target, coords) in enumerate(dataloader):
-            if config['stage2']['limit_iters'] and idx == config['stage2']['limit_iters'] - 1:
+            if config['stage2']['limit_iters'] and idx == config['stage2']['limit_iters']:
                 break
             img_input, img_target = tensors_to_device([img_input, img_target], device)
                 

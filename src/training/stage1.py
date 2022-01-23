@@ -18,6 +18,10 @@ def get_epochs(config: dict) -> int:
     return config['stage1']['epochs']
 
 
+def get_iter_limit(config: dict) -> int:
+    return config['stage1']['limit_iters']
+
+
 def get_optimizer(model: nn.Module, config: dict) -> torch.nn.Module:
     optimizer = optimizer_opts[config['stage1']['netG']['optimizer'].lower()]
     optimizer = optimizer(
@@ -39,7 +43,8 @@ def main(
     criterion = get_criterion(config)
     optimizer = get_optimizer(netG, config)
     epochs = get_epochs(config)
-    log.stage1.init(run, optimizer, criterion, epochs)
+    iter_limit = get_iter_limit(config)
+    log.stage1.init(run, optimizer, criterion, epochs, iter_limit)
     
     train, test = dataloader_split(dataloader, config)
         
@@ -47,7 +52,7 @@ def main(
         netG.train()
         loss_accum = []
         for idx, (img_input, img_target, coords) in enumerate(train):
-            if config['stage1']['limit_iters'] and idx == config['stage1']['limit_iters'] - 1:
+            if iter_limit and idx == iter_limit:
                 break
             img_input, img_target = tensors_to_device([img_input, img_target], device)
             
@@ -72,6 +77,8 @@ def main(
         netG.eval()
         with torch.no_grad():
             for idx, (img_input, img_target, coords) in enumerate(test):
+                if iter_limit and idx == iter_limit:
+                    break
                 img_input, img_target = tensors_to_device([img_input, img_target], device)
                 img_generated = netG(img_input)
                 
