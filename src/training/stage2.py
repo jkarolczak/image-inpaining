@@ -71,14 +71,17 @@ def main(
     real_label, fake_label = get_labels(dataloader, device)
     real_local_label, fake_local_label = torch.ones((1, 1), device=device), torch.zeros((1, 1), device=device)
 
-    
-
     for e in range(epochs):
         loss_G_accum, loss_GD_accum, loss_LD_accum = [], [], []
         netG.train(); netGD.train(), netLD.train()
         for idx, (img_input, img_target, coords) in enumerate(dataloader):
             if config['stage2']['limit_iters'] and idx == config['stage2']['limit_iters']:
                 break
+            
+            noise_bound = int(255 * ((2 / 3) ** e) / 4) 
+            img_target += torch.randint_like(img_target, -1 * noise_bound, noise_bound)
+            img_target = torch.clip(img_target, 0, 255)
+            
             img_input, img_target = tensors_to_device([img_input, img_target], device)
                 
             # -----------------
@@ -88,12 +91,10 @@ def main(
             netGD.zero_grad()   
             img_real_GD = netGD(img_target)
             loss_GD_real = criterionGD(img_real_GD, real_label)
-            #loss_GD_real.backward()
             
             img_fake = netG(img_input)
             img_fake_GD = netGD(img_fake.detach())
             loss_GD_fake = criterionGD(img_fake_GD, fake_label)
-            #loss_GD_fake.backward()
             
             loss_GD = (loss_GD_real + loss_GD_fake) / 2
             loss_GD.backward()
