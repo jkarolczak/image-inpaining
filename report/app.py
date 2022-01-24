@@ -1,10 +1,10 @@
 import streamlit as st
 
-from inference import *
-from pages import *
+from inference import inference
+from pages import bibliography, problem, environment
 
 
-def main():
+def main() -> None:
     st.set_page_config(
         page_title="Face inpainting",
         page_icon="🧑",
@@ -13,7 +13,8 @@ def main():
     pages = {
         'Problem and data': problem,
         'Environment': environment,
-        'Inferece': inference
+        'Live demo': inference,
+        'Sources': bibliography
     }
     name = st.sidebar.radio('Menu', pages.keys(), index=0)
     pages[name]()

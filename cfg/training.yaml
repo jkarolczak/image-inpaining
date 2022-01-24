@@ -1,13 +1,13 @@
 device: cuda
 dataloader:
-  batch_size: 3
+  batch_size: 4
   num_workers: 2
   shuffle: True
 
 stage1:
   loss: mse
-  epochs: 12
-  limit_iters: null
+  epochs: 10
+  limit_iters: 500
   netG:
     optimizer: adam
     lr: 0.0001
@@ -15,8 +15,8 @@ stage1:
 
 stage2:
   loss: bce
-  epochs: 20
-  limit_iters: null
+  epochs: 10
+  limit_iters: 500
   netG:
     optimizer: adam
     lr: 0.0001

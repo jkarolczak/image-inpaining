@@ -150,7 +150,11 @@ def main(
             loss_G_accum.append(loss_G.to(cpu))
             loss_GD_accum.append(loss_GD.to(cpu))
             loss_LD_accum.append(loss_LD.to(cpu))
-        
+            
+        if device == cuda:
+            torch.cuda.synchronize()
+            torch.cuda.empty_cache()
+    
         
         models.utils.serialize(netG, e + config['stage1']['epochs'])
         models.utils.serialize(netGD, e + config['stage1']['epochs'])  

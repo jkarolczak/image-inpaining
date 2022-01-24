@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 from typing import Union
 
+import numpy as np
 import torch
 import torch.nn as nn
 
@@ -35,3 +36,10 @@ def deserialize(
     model.to(device)
     return model
     
+    
+def count_parameters(
+    model: nn.Module
+) -> int:
+    model_parameters = filter(lambda p: p.requires_grad, model.parameters())
+    params = sum([np.prod(p.size()) for p in model_parameters])
+    return params

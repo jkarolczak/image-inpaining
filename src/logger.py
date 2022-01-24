@@ -6,9 +6,10 @@ import torch.nn as nn
 
 import neptune.new as neptune
 
-from .models.generator import Generator
-from .models.global_discriminator import GlobalDiscriminator
-from .models.local_discriminator import LocalDiscriminator
+from .models import utils
+from .models import Generator
+from .models import GlobalDiscriminator
+from .models import LocalDiscriminator
 
 
 def get_run(
@@ -46,7 +47,8 @@ class log:
         device: torch.device
     ) -> None:
         for name, net in zip(['netG', 'netGD', 'netLD'], [netG, netGD, netLD]):
-            run[f"models/{name}"] = str(net)
+            run[f"models/{name}/model"] = str(net)
+            run[f"models/{name}/parameters"] = utils.count_parameters(net)
         run["device"] = device
     
     class stage1:
