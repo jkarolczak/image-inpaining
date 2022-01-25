@@ -1,7 +1,7 @@
 import streamlit as st
 
 from inference import inference
-from pages import bibliography, problem, environment
+from pages import *
 
 
 def main() -> None:
@@ -11,10 +11,12 @@ def main() -> None:
         layout="wide",
     )
     pages = {
-        'Problem and data': problem,
-        'Environment': environment,
-        'Live demo': inference,
-        'Sources': bibliography
+        "Problem and data": problem,
+        "Our approach": approach,
+        "Environment": environment,
+        "Live demo": inference,
+        "Experiments": experiments,
+        "Sources": bibliography
     }
     name = st.sidebar.radio('Menu', pages.keys(), index=0)
     pages[name]()

@@ -84,18 +84,18 @@ class log:
             optim_netGD: torch.optim.Optimizer, 
             optim_netLD: torch.optim.Optimizer, 
             criterion: nn.Module,
-            epochs: int,
-            iter_limit: int
+            config: dict
         ) -> None:
             for net in ['netG', 'netGD', 'netLD']:
                 optim = eval(f'optim_{net}')
                 run[f"stage2/{net}/optimizer"] = type(optim).__name__
                 run[f"stage2/{net}/learning_rate"] = optim.defaults['lr']
                 run[f"stage2/{net}/weight_decay"] = optim.defaults['weight_decay']
+                run[f"stage2/{net}/train_every"] = config['stage2'][net]['train_every']
                 
             run["stage2/criterion"] = type(criterion).__name__ 
-            run["stage2/epochs"] = epochs
-            run["stage2/iter_limit"] = iter_limit
+            run["stage2/epochs"] = config['stage2']['epochs']
+            run["stage2/iter_limit"] = config['stage2']['limit_iters']
         
         class epoch:
             @staticmethod

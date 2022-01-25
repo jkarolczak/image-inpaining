@@ -66,7 +66,7 @@ def main(
     optim_netG, optim_netGD, optim_netLD = get_optimizers(netG, netGD, netLD, config)
     epochs = get_epochs(config)
     iter_limit = get_iter_limit(config)
-    log.stage2.init(run, optim_netG, optim_netGD, optim_netLD, criterionGD, epochs, iter_limit)
+    log.stage2.init(run, optim_netG, optim_netGD, optim_netLD, criterionGD, config)
 
     real_label, fake_label = get_labels(dataloader, device)
     real_local_label, fake_local_label = torch.ones((1, 1), device=device), torch.zeros((1, 1), device=device)
@@ -78,7 +78,7 @@ def main(
             if config['stage2']['limit_iters'] and idx == config['stage2']['limit_iters']:
                 break
             
-            noise_bound = int(255 * ((2 / 3) ** e) / 4) 
+            noise_bound = max(int(255 * (((2 / 3) ** e) / 4)), 1)
             img_target += torch.randint_like(img_target, -1 * noise_bound, noise_bound)
             img_target = torch.clip(img_target, 0, 255)
             
@@ -88,67 +88,72 @@ def main(
             #  Train Global Discriminator
             # -----------------
             
-            netGD.zero_grad()   
-            img_real_GD = netGD(img_target)
-            loss_GD_real = criterionGD(img_real_GD, real_label)
-            
-            img_fake = netG(img_input)
-            img_fake_GD = netGD(img_fake.detach())
-            loss_GD_fake = criterionGD(img_fake_GD, fake_label)
-            
-            loss_GD = (loss_GD_real + loss_GD_fake) / 2
-            loss_GD.backward()
+            if not e % config['stage2']['netGD']['train_every']:
+                netGD.zero_grad()   
+                
+                img_real_GD = netGD(img_target)
+                loss_GD_real = criterionGD(img_real_GD, real_label)
+                
+                img_fake = netG(img_input)
+                img_fake_GD = netGD(img_fake.detach())
+                loss_GD_fake = criterionGD(img_fake_GD, fake_label)
+                
+                loss_GD = (loss_GD_real + loss_GD_fake) / 2
+                loss_GD.backward()
 
-            optim_netGD.step()
+                optim_netGD.step()
 
             # -----------------
             #  Train Local Discriminator
             # -----------------
 
-            netLD.zero_grad()
+            if not e % config['stage2']['netLD']['train_every']:
+                netLD.zero_grad()
 
-            losses_LD = []
-            for (target, fake, coord) in zip(img_target, img_fake.detach(), coords):
-                x, y, w, h = coord
-                local_target = target[y: y + h, x: x + w]
-                local_fake = fake[y: y + h, x: x + w]
+                losses_LD = []
+                for (target, fake, coord) in zip(img_target, img_fake.detach(), coords):
+                    x, y, w, h = coord
+                    local_target = target[y: y + h, x: x + w]
+                    local_fake = fake[y: y + h, x: x + w]
 
-                local_real_LD = netLD(local_target)
-                loss_LD_real = criterionLD(local_real_LD, real_local_label)
+                    local_real_LD = netLD(local_target)
+                    loss_LD_real = criterionLD(local_real_LD, real_local_label)
 
-                local_fake_LD = netLD(local_fake)
-                loss_LD_fake = criterionLD(local_fake_LD, fake_local_label)
-                losses_LD.append((loss_LD_real + loss_LD_fake) / 2)
+                    local_fake_LD = netLD(local_fake)
+                    loss_LD_fake = criterionLD(local_fake_LD, fake_local_label)
+                    losses_LD.append((loss_LD_real + loss_LD_fake) / 2)
 
-            loss_LD = sum(losses_LD)
-            loss_LD.backward()
+                loss_LD = sum(losses_LD)
+                loss_LD.backward()
 
-            optim_netLD.step()
+                optim_netLD.step()
             
             # -----------------
             #  Train Generator
             # -----------------
 
-            netG.zero_grad()
-            img_fake_G = netGD(img_fake)
-            loss_img_G = criterionGD(img_fake_G, real_label)
+            if not e % config['stage2']['netG']['train_every']:
+                netG.zero_grad()
+                img_fake_G = netGD(img_fake)
+                loss_img_G = criterionGD(img_fake_G, real_label)
 
-            local_losses_G = []
-            for (fake, coord) in zip(img_fake, coords):
-                x, y, w, h = coord
-                local_fake = fake[y: y + h, x: x + w]
+                local_losses_G = []
+                for (fake, coord) in zip(img_fake, coords):
+                    x, y, w, h = coord
+                    local_fake = fake[y: y + h, x: x + w]
 
-                local_fake_G = netLD(local_fake)
-                loss_local_G = criterionLD(local_fake_G, real_local_label)
-                local_losses_G.append(loss_local_G)
+                    local_fake_G = netLD(local_fake)
+                    loss_local_G = criterionLD(local_fake_G, real_local_label)
+                    local_losses_G.append(loss_local_G)
 
-            loss_local_G = sum(local_losses_G)
-            loss_G = (loss_img_G + loss_local_G) / 2
-            loss_G.backward()
-    
-            optim_netG.step()
+                loss_local_G = sum(local_losses_G)
+                loss_G = (loss_img_G + loss_local_G) / 2
+                loss_G.backward()
+        
+                optim_netG.step()
 
-            loss_G_accum.append(loss_G.to(cpu))
+                loss_G_accum.append(loss_G.to(cpu))
+                
             loss_GD_accum.append(loss_GD.to(cpu))
             loss_LD_accum.append(loss_LD.to(cpu))
             

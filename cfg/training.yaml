@@ -7,7 +7,7 @@ dataloader:
 stage1:
   loss: mse
   epochs: 10
-  limit_iters: 500
+  limit_iters: 20
   netG:
     optimizer: adam
     lr: 0.0001
@@ -15,17 +15,20 @@ stage1:
 
 stage2:
   loss: bce
-  epochs: 10
-  limit_iters: 500
+  epochs: 0
+  limit_iters: 200
   netG:
+    train_every: 2
     optimizer: adam
     lr: 0.0001
     weight_decay: 0.0
   netGD:
+    train_every: 1
     optimizer: adam
     lr: 0.0001
     weight_decay: 0.0
   netLD:
+    train_every: 1
     optimizer: adam
     lr: 0.0001
     weight_decay: 0.0
