@@ -25,6 +25,12 @@ To run the training process in debugging mode:<br>
 *Debugging stops logging to neptune and display intermediate results to standard output.*
 > `python train.py --debug`
 
-To performe inference using generator run:
+To automatically reproduce the entire training with a current selection of parameters in `cfg` folder:
+> `dvc repro`
+This will automatically run the following DVC stages:
+- `generate_data` - generation of partial dataset with masked areas 
+- `train_model` - trains GAN-based architechture 
+
+To perform inference using generator run:
 > `python infer.py --statedict path_to_statedict --images 10`
 Where `--path_to_statedict` stands for file to a pickled generators state dict and `--images` stands for number of images to use. Specifying number of images may be omitted.
