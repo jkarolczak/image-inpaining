@@ -26,7 +26,8 @@ To run the training process in debugging mode:<br>
 > `python train.py --debug`
 
 To automatically reproduce the entire training with a current selection of parameters in `cfg` folder:
-> `dvc repro`
+> `dvc repro`  
+
 This will automatically run the following DVC stages:
 - `generate_data` - generation of partial dataset with masked areas 
 - `train_model` - trains GAN-based architechture 
