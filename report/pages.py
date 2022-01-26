@@ -29,6 +29,8 @@ def approach() -> None:
             st.download_button("Download netLD.png", data=file, file_name="netLD.png", mime='image/png')
             st.image('report/images/LocalDiscriminator.png')   
     
+    st.image('report/images/architecture.png')
+    
     st.header("Final implementation")
     st.markdown("""
         GAN training is a complex process where generator and discriminators are constantly trying to get better than the other. In such environment, it often occur that one of the partial models becomes too accurate compared to its counterpart, which results in the other one unable to learn anything useful. 
@@ -72,7 +74,7 @@ def approach() -> None:
     with col2:
         df_lr = pd.read_csv('report/dataframes/final_networks.csv')
         fig = df_lr.plot()
-        fig.update_xaxes(title="epoch")
+        fig.update_xaxes(title="", tickmode="array", ticktext=["stage 1", "stage 2"], tickvals=[4.5, 18.5])
         fig.update_yaxes(title="mean absolute error")
         fig.add_vline(x=9.0)
         st.plotly_chart(fig)
