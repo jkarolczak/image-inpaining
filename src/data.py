@@ -108,6 +108,28 @@ class Dataset(torch.utils.data.Dataset):
         return (input_img, target_img, coords)
     
 
+class InferDataset(torch.utils.data.Dataset):
+    def __init__(
+        self,
+        dir: str = 'data/'
+    ):
+        super().__init__()
+        self.dir = dir
+        self.item_list = []
+        for file_name in os.listdir(self.dir):
+            if os.path.isfile(os.path.join(self.dir, file_name)):
+                self.item_list.append(file_name)
+        
+    def __len__(self) -> int:
+        return self.item_list.shape[0]
+    
+    def __getitem__(self, idx: int) -> torch.Tensor:
+        img_name = self.item_list[idx]
+        img_path = os.path.join(self.dir, img_name)
+        target_img = cv2.imread(img_path)
+        return target_img
+
+
 def dataset_split(
     dataset: Dataset,
     train_size: float = 0.85
