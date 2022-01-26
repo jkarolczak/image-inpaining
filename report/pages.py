@@ -29,6 +29,12 @@ def approach() -> None:
             st.download_button("Download netLD.png", data=file, file_name="netLD.png", mime='image/png')
             st.image('report/images/LocalDiscriminator.png')
 
+    st.header("Training - stage 2")
+    df_lr = pd.read_csv('report/dataframes/stage2.csv')
+    fig = df_lr.plot()
+    fig.update_xaxes(title="epoch")
+    fig.update_yaxes(title="binary cross entropy")
+    st.plotly_chart(fig)
 
 def bibliography() -> None:
     st.header("Sources")
@@ -86,6 +92,14 @@ def experiments() -> None:
     with col1:
         st.subheader("Stage 1 - learning rate")
         df_lr = pd.read_csv('report/dataframes/lr.csv')
+        fig = df_lr.plot()
+        fig.update_xaxes(title="epoch")
+        fig.update_yaxes(title="mean absolute error")
+        st.plotly_chart(fig)
+        
+    with col2:
+        st.subheader("Stage 1 - optimizers")
+        df_lr = pd.read_csv('report/dataframes/optimizer.csv')
         fig = df_lr.plot()
         fig.update_xaxes(title="epoch")
         fig.update_yaxes(title="mean absolute error")
