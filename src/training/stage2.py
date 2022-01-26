@@ -3,6 +3,7 @@ from typing import Tuple
 import neptune.new as neptune
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 import src.models as models
 from src.data import dataloader_split
@@ -22,6 +23,7 @@ def get_epochs(config: dict) -> int:
 
 def get_iter_limit(config: dict) -> int:
     return config['stage2']['limit_iters']
+
 
 def get_generator_weights(config: dict) -> dict:
     return {
@@ -78,12 +80,13 @@ def main(
     real_label, fake_label = get_labels(dataloader, device)
     real_local_label, fake_local_label = torch.ones((1, 1), device=device), torch.zeros((1, 1), device=device)
 
+    train, test = dataloader_split(dataloader, config)
+
     for e in range(epochs):
         loss_G_accum, loss_GD_accum, loss_LD_accum = [], [], []
         netG.train(); netGD.train(), netLD.train()
-        for idx, (img_input, img_target, coords) in enumerate(dataloader):
-            if config['stage2']['limit_iters'] and idx == config['stage2']['limit_iters']:
-                break
+        for idx, (img_input, img_target, coords) in enumerate(train):
+            if iter_limit and idx == iter_limit: break
             
             noise_bound = max(int(255 * (((2 / 3) ** e) / 4)), 1)
             img_target += torch.randint_like(img_target, -1 * noise_bound, noise_bound)
@@ -166,6 +169,23 @@ def main(
             loss_GD_accum.append(loss_GD.to(cpu))
             loss_LD_accum.append(loss_LD.to(cpu))
             
+        mse_accum = []
+        mae_accum = []
+        netG.eval()
+        with torch.no_grad():
+            for idx, (img_input, img_target, coords) in enumerate(test):
+                if iter_limit and idx == iter_limit: break
+                img_input, img_target = tensors_to_device([img_input, img_target], device)
+                img_generated = netG(img_input)
+                
+                mse = F.mse_loss(img_generated, img_target)
+                mse_accum.append(mse.to(cpu))
+                
+                mae = F.l1_loss(img_generated, img_target)
+                mae_accum.append(mae.to(cpu))
+        
+        log.stage2.epoch.test(run, {'mse': mean(mse_accum), 'mae': mean(mae_accum)})
+            
         if device == cuda:
             torch.cuda.synchronize()
             torch.cuda.empty_cache()
@@ -174,7 +194,7 @@ def main(
         models.utils.serialize(netG, e + config['stage1']['epochs'])
         models.utils.serialize(netGD, e + config['stage1']['epochs'])  
         log.stage2.epoch.train(run, {
-                                   'bceG': mean(loss_G_accum), 
+                                   'lossG': mean(loss_G_accum), 
                                    'bceGD': mean(loss_GD_accum), 
                                    'bceLD': mean(loss_LD_accum)
                                 })      

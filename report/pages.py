@@ -1,4 +1,3 @@
-from matplotlib.pyplot import ylabel
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -6,6 +5,7 @@ import streamlit as st
 
 def approach() -> None:
     st.header("Our approach")
+    pd.options.plotting.backend = "plotly"
     st.markdown("""
         Our solution belongs to a generative adversarial network class. The solution consists of three networks:
         - `netG` - neural network acting as a generator. This network is inspired with VGG-19 architecture. It consists of 5831043 parameters (about 23.32 MB).
@@ -35,6 +35,7 @@ def approach() -> None:
     fig.update_xaxes(title="epoch")
     fig.update_yaxes(title="binary cross entropy")
     st.plotly_chart(fig)
+
 
 def bibliography() -> None:
     st.header("Sources")
@@ -104,6 +105,7 @@ def experiments() -> None:
         fig.update_xaxes(title="epoch")
         fig.update_yaxes(title="mean absolute error")
         st.plotly_chart(fig)
+        
         
 def problem() -> None:
     col1, col2 = st.columns(2)
