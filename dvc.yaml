@@ -8,3 +8,40 @@ stages:
     outs:
     - data/dataset.csv
     - data/img
+  train_model:
+    cmd: py train.py
+    params:
+    - cfg/training.yaml:
+      - dataloader.batch_size
+      - dataloader.num_workers
+      - dataloader.shuffle
+      - stage1.loss
+      - stage1.epochs
+      - stage1.limit_iters
+      - stage1.netG.optimizer
+      - stage1.netG.lr
+      - stage1.netG.weight_decay
+      - stage2.discriminator_loss
+      - stage2.generator_loss
+      - stage2.epochs
+      - stage2.limit_iters
+      - stage2.netG.train_every
+      - stage2.netG.optimizer
+      - stage2.netG.lr
+      - stage2.netG.weight_decay
+      - stage2.netG.mse_weight
+      - stage2.netG.local_weight
+      - stage2.netG.global_weight
+      - stage2.netGD.train_every
+      - stage2.netGD.optimizer
+      - stage2.netGD.lr
+      - stage2.netGD.weight_decay
+      - stage2.netLD.train_every
+      - stage2.netLD.optimizer
+      - stage2.netLD.lr
+      - stage2.netLD.weight_decay
+    deps:
+    - data/dataset.csv
+    - data/img
+    outs:
+    - data/models
