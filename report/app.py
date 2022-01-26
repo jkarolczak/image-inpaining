@@ -13,7 +13,7 @@ def main() -> None:
     pages = {
         "Problem and data": problem,
         "Our approach": approach,
-        "Hyperparameters": hyperparameters,
+        "Hyperparameters": parameters,
         "Environment": environment,
         "Live demo": inference,
         "Sources": bibliography

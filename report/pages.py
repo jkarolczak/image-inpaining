@@ -133,7 +133,7 @@ def environment() -> None:
         """)    
         
         
-def hyperparameters() -> None:
+def parameters() -> None:
     st.header("Hyperparameters")
     st.markdown("""
     Transfering all of the parameters used by our models to separate .yaml files leads to much easier management and monitoring of settings used in every recorded run. Moreover, correctly defined stages in DVC pipeline can store this data and use it to verify whether it should run a particular step in the pipeline. 
