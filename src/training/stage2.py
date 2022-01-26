@@ -13,7 +13,7 @@ from src.visualization import *
 
 
 def get_criterion(config: dict) -> torch.nn.Module:
-    return [criterion_opts[config['stage2']['loss'].lower()]() for _ in range(2)]
+    return [criterion_opts[config['stage2']['discriminator_loss'].lower()]() for _ in range(2)] + [criterion_opts[config['stage2']['generator_loss'].lower()]()]
 
 
 def get_epochs(config: dict) -> int:
@@ -23,6 +23,12 @@ def get_epochs(config: dict) -> int:
 def get_iter_limit(config: dict) -> int:
     return config['stage2']['limit_iters']
 
+def get_generator_weights(config: dict) -> dict:
+    return {
+        'mse': float(config['stage2']['netG']['mse_weight']),
+        'local': float(config['stage2']['netG']['local_weight']),
+        'global': float(config['stage2']['netG']['global_weight'])
+    }
 
 def get_optimizers(
     netG: nn.Module, 
@@ -62,10 +68,11 @@ def main(
     debug: bool, 
     run: neptune.Run
 ) -> None:
-    criterionGD, criterionLD = get_criterion(config)
+    criterionGD, criterionLD, criterionG = get_criterion(config)
     optim_netG, optim_netGD, optim_netLD = get_optimizers(netG, netGD, netLD, config)
     epochs = get_epochs(config)
     iter_limit = get_iter_limit(config)
+    generator_weights = get_generator_weights(config)
     log.stage2.init(run, optim_netG, optim_netGD, optim_netLD, criterionGD, config)
 
     real_label, fake_label = get_labels(dataloader, device)
@@ -137,6 +144,8 @@ def main(
                 img_fake_G = netGD(img_fake)
                 loss_img_G = criterionGD(img_fake_G, real_label)
 
+                mse_loss_G = criterionG(img_fake, img_target)
+
                 local_losses_G = []
                 for (fake, coord) in zip(img_fake, coords):
                     x, y, w, h = coord
@@ -147,7 +156,7 @@ def main(
                     local_losses_G.append(loss_local_G)
 
                 loss_local_G = sum(local_losses_G)
-                loss_G = (loss_img_G + loss_local_G) / 2
+                loss_G = generator_weights['mse'] * mse_loss_G + generator_weights['global'] * loss_img_G + generator_weights['local'] * loss_local_G
                 loss_G.backward()
         
                 optim_netG.step()
