@@ -42,14 +42,14 @@ def inference():
         form = st.form("inference_form")
         file = form.file_uploader("Input data", type=['jpg', 'png'])
         if form.form_submit_button():
-            #try:
-            content = file.getvalue()
-            placeholder_in.image(content)
-            inpainted = _inpaint(content)
-            placeholder_out.image(inpainted)
+            try:
+                content = file.getvalue()
+                placeholder_in.image(content)
+                inpainted = _inpaint(content)
+                placeholder_out.image(inpainted)
                     
-            #except:
-            st.error("Uploading file is mandatory!")
+            except:
+                st.error("Uploading file is mandatory!")
     with col2:
         st.header("Output")
         st.markdown("Inference results will be displayed below after uploading file on the left-hand-side of the screen.")

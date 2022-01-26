@@ -13,9 +13,9 @@ def main() -> None:
     pages = {
         "Problem and data": problem,
         "Our approach": approach,
+        "Hyperparameters": hyperparameters,
         "Environment": environment,
         "Live demo": inference,
-        "Experiments": experiments,
         "Sources": bibliography
     }
     name = st.sidebar.radio('Menu', pages.keys(), index=0)
