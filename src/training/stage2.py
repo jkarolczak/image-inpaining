@@ -98,7 +98,8 @@ def main(
             #  Train Global Discriminator
             # -----------------
             
-            if not e % config['stage2']['netGD']['train_every']:
+            loss_GD = torch.zeros((1))
+            if config['stage2']['netGD']['train_every'] and not e % config['stage2']['netGD']['train_every']:
                 netGD.zero_grad()   
                 
                 img_real_GD = netGD(img_target)
@@ -116,11 +117,11 @@ def main(
             # -----------------
             #  Train Local Discriminator
             # -----------------
-
-            if not e % config['stage2']['netLD']['train_every']:
+            loss_LD = torch.zeros((1))
+            losses_LD = []
+            if config['stage2']['netLD']['train_every'] and not e % config['stage2']['netLD']['train_every']:
                 netLD.zero_grad()
 
-                losses_LD = []
                 for (target, fake, coord) in zip(img_target, img_fake.detach(), coords):
                     x, y, w, h = coord
                     local_target = target[y: y + h, x: x + w]
@@ -142,7 +143,7 @@ def main(
             #  Train Generator
             # -----------------
 
-            if not e % config['stage2']['netG']['train_every']:
+            if config['stage2']['netG']['train_every'] and not e % config['stage2']['netG']['train_every']:
                 netG.zero_grad()
                 img_fake_G = netGD(img_fake)
                 loss_img_G = criterionGD(img_fake_G, real_label)

@@ -1,16 +1,16 @@
-
 import argparse
 import os
-import stat
-import yaml
+from datetime import datetime
 from typing import Dict
 
 import cv2
 import torch
+import yaml
 
 import src.models as models
 from src.data import Dataset
 from src.models import Generator
+from src.training.common import mean
 
 
 def get_config(
@@ -64,12 +64,16 @@ def main(state_dict_path: str, images: int) -> None:
     
     netG.train()
     with torch.no_grad():
+        times = []
         for idx, (img_input, img_target, coords) in enumerate(dataloader):
             if idx == images: break
+            start_time = datetime.now()
             img_generated = netG(img_input)
+            times.append((datetime.now() - start_time).total_seconds())
             img_numpy = img_generated[0].numpy()
             path = get_img_path(idx)
             cv2.imwrite(path, img_numpy)
+        print(f"Mean inference time: {mean(times) * 1000:.2f} ms ({mean(times):.4f} s)\nThe time excludes reading and writing files and was averaged over {images} images.")
         
     
 if __name__ == '__main__':

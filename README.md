@@ -1,5 +1,8 @@
 # Image inpainting using GAN
 
+## Report
+A report and live demo are available [here](https://share.streamlit.io/jkarolczak/image-inpainting/main/report/app.py)
+
 ## Configuration and usage
 
 To create environment using Conda and `yaml` files:
@@ -25,14 +28,3 @@ To run the training process in debugging mode:<br>
 To performe inference using generator run:
 > `python infer.py --statedict path_to_statedict --images 10`
 Where `--path_to_statedict` stands for file to a pickled generators state dict and `--images` stands for number of images to use. Specifying number of images may be omitted.
-
-## Theory behind
-
-Used notation:
-- `netG` - neural network acting as a generator 
-- `netGD` - neural network acting as a global discriminator evaluating whether the whole image seems to be real 
-- `netLD` - neural network acting as a local discriminator evaluating whether the erased area seems to be real
-
-Computations are done in two phases:
-- stage 1 - the generator (`netG`) is fitted in a casual manner using a loss and an optimizer. This significantly reduce time and space complexity. Hence this step provide generator's initial weights in a reasonable time.
-- stage 2 - generator is fine-tuned using global (`netGD`) and local (`netLD`) discriminators. This stage follows GAN architecture.
