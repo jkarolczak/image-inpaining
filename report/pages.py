@@ -121,6 +121,7 @@ def environment() -> None:
         st.markdown("""
             - Ubuntu 20.04
             - CUDA Toolkit 11.5
+            - git & github - [version control](https://github.com/jkarolczak/image-inpainting)
             - neptune.ai - [experiments tracking](https://share.streamlit.io/jkarolczak/image-inpainting/main/report/app.py)
             - DVC
             - Python 3.9 with the following packages:
@@ -129,7 +130,7 @@ def environment() -> None:
                 - `pandas` - managing datasets
                 - `opencv` - manipulating pictures, reading and writing images to files
                 - `scikit-learn` - splitting dataset
-                - `streamlit` - deploying the final model in an accesbile way for end-users and writing this report
+                - `streamlit` - deploying the final model in an accessible way for end-users and writing this report
                 - `neptune-client` - tracking experiments using [neptune.ai](https://neptune.ai/)
                 - `matplotlib.pyplot` - visualizing results 
         """)    
